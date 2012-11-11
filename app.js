@@ -1,6 +1,5 @@
 var express = require('express'),
-	 OAuth = require('oauth').OAuth,
-	 querystring = require('querystring');
+	 OAuth = require('oauth').OAuth;
 
 // Setup the Express.js server
 var app = express.createServer();
@@ -13,34 +12,31 @@ app.use(express.session({
 
 // Home Page
 app.get('/', function(req, res){
-	if(!req.session.oauth_access_token) {
-		res.redirect("/google_login");
+	res.send('Working on it');
+	/*if(!req.session.oauth_access_token) {
+		res.redirect("/tumblr_login");	
+		//res.redirect("/google_login");
 	}
 	else {
-		res.redirect("/google_contacts");
-	}
+		res.redirect("/getTumblrInfo");
+	}*/
 });
 
-// Request an OAuth Request Token, and redirects the user to authorize it
-app.get('/google_login', function(req, res) {
+
+app.get('/tumblr_login', function(req,res){
 	
-	var getRequestTokenUrl = "https://www.google.com/accounts/OAuthGetRequestToken";
-	
-	// GData specifid: scopes that wa want access to
-	var gdataScopes = [
-		querystring.escape("https://www.google.com/m8/feeds/"),
-		querystring.escape("https://www.google.com/calendar/feeds/")
-	];
-	
-	var oa = new OAuth(getRequestTokenUrl+"?scope="+gdataScopes.join('+'),
-	                  "https://www.google.com/accounts/OAuthGetAccessToken",
-	                  "anonymous",
-	                  "anonymous",
+	var oa = new OAuth("http://www.tumblr.com/oauth/request_token",
+						"http://www.tumblr.com/oauth/access_token",
+	                  process.env.MULTIPOST_CONSUME_KEY,
+	                  process.env.MULTIPOST_SECRET_KEY,
 	                  "1.0",
-	                  "http://localhost:3000/google_cb"+( req.param('action') && req.param('action') != "" ? "?action="+querystring.escape(req.param('action')) : "" ),
+	                  "http://google.com",
+	                  //"http://localhost:3000/tumblr_cb"+( req.param('action') && req.param('action') != "" ? "?action="+querystring.escape(req.param('action')) : "" ),
 	                  "HMAC-SHA1");
 
 	oa.getOAuthRequestToken(function(error, oauth_token, oauth_token_secret, results){
+
+		console.log("HERE");
 	  if(error) {
 			console.log('error');
 	 		console.log(error);
@@ -52,14 +48,13 @@ app.get('/google_login', function(req, res) {
 			req.session.oauth_token_secret = oauth_token_secret;
 		
 			// redirect the user to authorize the token
-	   	res.redirect("https://www.google.com/accounts/OAuthAuthorizeToken?oauth_token="+oauth_token);
+	   		res.redirect("http://www.tumblr.com/oauth/authorize?oauth_token="+oauth_token);
 	  }
 	})
-
-});
+})
 
 // Callback for the authorization page
-app.get('/google_cb', function(req, res) {
+app.get('/tumblr_cb', function(req, res) {
 		
 	// get the OAuth access token with the 'oauth_verifier' that we received
 	
@@ -88,24 +83,15 @@ app.get('/google_cb', function(req, res) {
 				// store the access token in the session
 				req.session.oauth_access_token = oauth_access_token;
 				req.session.oauth_access_token_secret = oauth_access_token_secret;
-
-	    		res.redirect((req.param('action') && req.param('action') != "") ? req.param('action') : "/google_contacts");
+				
+	    		res.redirect((req.param('action') && req.param('action') != "") ? req.param('action') : "/getTumblrInfo");
 	 		}
 
 	});
 	
 });
 
-
-function require_google_login(req, res, next) {
-	if(!req.session.oauth_access_token) {
-		res.redirect("/google_login?action="+querystring.escape(req.originalUrl));
-		return;
-	}
-	next();
-};
-
-app.get('/google_contacts', require_google_login, function(req, res) {
+app.get('/makeTumblrPost', function(req,res){
 	var oa = new OAuth(req.session.oa._requestUrl,
 	                  req.session.oa._accessUrl,
 	                  req.session.oa._consumerKey,
@@ -113,56 +99,40 @@ app.get('/google_contacts', require_google_login, function(req, res) {
 	                  req.session.oa._version,
 	                  req.session.oa._authorize_callback,
 	                  req.session.oa._signatureMethod);
-	
-    console.log(oa);
 
-	// Example using GData API v3
-	// GData Specific Header
-	oa._headers['GData-Version'] = '3.0'; 
-	
-	oa.getProtectedResource(
-		"https://www.google.com/m8/feeds/contacts/default/full?alt=json", 
-		"GET", 
-		req.session.oauth_access_token, 
-		req.session.oauth_access_token_secret,
-		function (error, data, response) {
-			
-			var feed = JSON.parse(data);
-			
-			res.render('google_contacts.ejs', {
-				locals: { feed: feed }
-			});
-	});
-	
-});
 
-app.get('/google_calendars', require_google_login, function(req, res) {
-		var oa = new OAuth(req.session.oa._requestUrl,
+})
+
+app.get('/getTumblrInfo', function(req, res){
+
+	var oa = new OAuth(req.session.oa._requestUrl,
 	                  req.session.oa._accessUrl,
 	                  req.session.oa._consumerKey,
 	                  req.session.oa._consumerSecret,
 	                  req.session.oa._version,
 	                  req.session.oa._authorize_callback,
 	                  req.session.oa._signatureMethod);
-	// Example using GData API v2
-	// GData Specific Header
-	oa._headers['GData-Version'] = '2'; 
-	
+
+	console.log("GETTING TUMBLR INFO");
+
 	oa.getProtectedResource(
-		"https://www.google.com/calendar/feeds/default/allcalendars/full?alt=jsonc", 
-		"GET", 
-		req.session.oauth_access_token, 
-		req.session.oauth_access_token_secret,
-		function (error, data, response) {
-			
-			var feed = JSON.parse(data);
-			
-			res.render('google_calendars.ejs', {
-				locals: { feed: feed }
-			});
-	});
-	
+					"http://api.tumblr.com/v2/user/info	", 
+					"GET", 
+					req.session.oauth_access_token, 
+					req.session.oauth_access_token_secret,
+					function (error, data, response) {
+						console.log("DATA: " + data);
+						var feed = JSON.parse(data);
+
+						console.log(feed.response.user.blogs[0]);
+						res.write(data);
+						//res.write(JSON.stringify(data));
+						res.end();
+					}		
+				)	
 });
 
-app.listen(3000);
-console.log("listening on http://localhost:3000");
+
+var port = process.env.PORT || 3000;
+console.log("listening on http://localhost:" + port);
+app.listen(port);
