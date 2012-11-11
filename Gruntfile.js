@@ -80,7 +80,7 @@ module.exports = function( grunt ) {
       files: [
         'Gruntfile.js',
         'app/scripts/**/*.js',
-        'test/**/*.js'
+        'spec/**/*.js'
       ]
     },
 
@@ -124,7 +124,7 @@ module.exports = function( grunt ) {
 
     // concat css/**/*.css files, inline @import, output a single minified css
     css: {
-      'styles/main.css': ['styles/**/*.css']
+      'styles/index.css': ['styles/**/*.css']
     },
 
     // renames JS/CSS to prepend a hash of their contents for easier
@@ -168,7 +168,8 @@ module.exports = function( grunt ) {
       // no minification, is done by the min task
       optimize: 'none',
       baseUrl: './scripts',
-      wrap: true
+      wrap: true,
+      name: 'config'
     },
   });
 
