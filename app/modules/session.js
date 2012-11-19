@@ -21,15 +21,13 @@ function(app) {
 
     initialize: function(){
       this.model.on("change", function() {
+        console.log(this.model.toJSON())
         this.render();
       }, this);
     },
 
     serialize: function() {
-
-      console.log(this.model.toJSON());
-
-      return this.model
+      return { tumblr: true, evernote: false, mybb: true }
     }
   });
 

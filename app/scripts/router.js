@@ -14,18 +14,18 @@ function(app, Home, Session) {
     },
 
     index: function() {
-
       var sessionModel = new Session.Model();
 
       app.useLayout("main").setViews({
         // Attach the root content View to the layout.
-        "#home": new Home.Views.Layout(),
-        
-      })//.render();
+        "#home": new Home.Views.Layout()
+      }).render();
 
-       new Session.View({model: sessionModel })
+      session =  new Session.View({ model: sessionModel })
 
-      sessionModel.fetch();
+      sessionModel.fetch().success(function(){
+        console.log(session.el)
+      });
       
     }
   });
