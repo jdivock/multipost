@@ -15,7 +15,8 @@ function($, _, Backbone, Handlebars) {
   // creation.
   var app = {
     // The root path to run the application.
-    root: "/"
+    root: "/",
+    prefix: "http://localhost:3000"
   };
 
   // Localize or create a new JavaScript Template object.
