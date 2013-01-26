@@ -23,16 +23,16 @@ app.use(express.session({
 app.use(express.methodOverride());
 app.use(allowCrossDomain);
 
-
+app.use(express.static(__dirname));
 
 // Home Page
-/*app.get('/', function(request, response){
+/*(app.get('/', function(request, response){
 	response.send('Working on it');
 	//console.log(request);
-/*
+
 	if(!request.session.tumblr_oauth_access_token) {
 		response.redirect("/tumblr_login");	
-		//response.redirect("/google_login");
+		
 	}
 	else {
 		response.redirect("/getTumblrUserInfo");
@@ -203,7 +203,7 @@ app.get('/getTumblrInfo', require_tumblr_login, function(request, response){
 				)	
 });
 
-app.use(express.static(__dirname));
+
 
 var port = process.env.PORT || 3000;
 console.log("listening on http://localhost:" + port);
