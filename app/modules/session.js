@@ -12,7 +12,7 @@ function(app) {
 
   // Default Model.
   Session.Model = Backbone.Model.extend({
-    url: app.prefix + "/checkSessions"
+    url: "/checkSessions"
   });
 
   // Default View.
@@ -21,13 +21,21 @@ function(app) {
 
     initialize: function(){
       this.model.on("change", function() {
-        console.log(this.model.toJSON())
+        console.log("MODEL CHANGED");
         this.render();
       }, this);
     },
 
+    data: function(){
+      console.log("DATA");
+    },
+
     serialize: function() {
-      return { tumblr: true, evernote: false, mybb: true }
+     console.log("SERIALIZE");
+
+     var ret = this.model ? this.model.toJSON() : {};
+      console.log(ret);
+      return { session: ret }
     }
   });
 

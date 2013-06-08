@@ -10,9 +10,9 @@ require.config({
     plugins: "../scripts/plugins",
 
     // Libraries.
-    jquery: "../scripts/libs/jquery",
-    lodash: "../scripts/libs/lodash",
-    backbone: "../scripts/libs/backbone",
+    jquery: "../components/jquery/jquery",
+    lodash: "../components/lodash/dist/lodash.underscore",
+    backbone: "../components/backbone/backbone",
 
     bootstrap: "../components/bootstrap.css/js/bootstrap",
 

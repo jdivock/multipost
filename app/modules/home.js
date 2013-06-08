@@ -21,7 +21,7 @@ function(app) {
   });
 
   // Default View.
-  Home.Views.Layout = Backbone.View.extend({
+  Home.View = Backbone.View.extend({
     template: "home"
   });
 

@@ -1,0 +1,13 @@
+Tumblr action:
+
+User gets to page
+	- Defaults checks?
+		- cookie this
+	- Check off tumblr
+		- do we have oauth?
+			?Yes: check
+			?No: get token and auth
+
+Make post
+	Tumblr:
+		- post to tumblr

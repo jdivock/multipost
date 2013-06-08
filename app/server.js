@@ -12,6 +12,7 @@ var allowCrossDomain = function(req, res, next) {
 }
 
 
+
 // Setup the Express.js server
 var app = express.createServer();
 app.use(express.logger());
@@ -26,8 +27,8 @@ app.use(allowCrossDomain);
 app.use(express.static(__dirname));
 
 // Home Page
-/*(app.get('/', function(request, response){
-	response.send('Working on it');
+app.get('/', function(request, response){
+	//response.send('Working on it');
 	//console.log(request);
 
 	if(!request.session.tumblr_oauth_access_token) {
@@ -37,13 +38,16 @@ app.use(express.static(__dirname));
 	else {
 		response.redirect("/getTumblrUserInfo");
 	}
-});*/
+});
 
 app.get('/checkSessions', function(request, response){
 	var sessionCheck = new Object();
 	sessionCheck.tumblr = request.session.tumblr_oauth_access_token ? true : false;
 	sessionCheck.evernote  = request.session.evernote_oauth_access_token ? true: false;
 	sessionCheck.mybb = request.session.mybb_oauth_accesss_token ? true : false;
+
+	sessionCheck.tumblr = true;
+
 	response.send(JSON.stringify(sessionCheck));
 });
 

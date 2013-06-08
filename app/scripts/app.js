@@ -22,12 +22,10 @@ function($, _, Backbone, Handlebars) {
   var JST = window.JST = window.JST || {};
 
   // Configure LayoutManager with Backbone Boilerplate defaults.
-  Backbone.LayoutManager.configure({
+  Backbone.Layout.configure({
     manage:true,
-    paths: {
-      layout: "templates/layouts/",
-      template: "templates/"
-    },
+    prefix:  "templates/",
+
 
   fetch: function(path) {
       var done;

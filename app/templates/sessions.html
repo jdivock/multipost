@@ -1,14 +1,15 @@
+
+
+{{#if session}}
 <ul>
-	{{#unless evernote}}
+	{{#if session.evernote}}
 	<li>
 		Evernote {{evernote}}
 	</li>
-	{{/unless}}
-	{{#unless tumblr}}
+	{{/if}}
 	<li>
-		Tumblr {{tumblr}}
+		Tumblr {{session.tumblr}}
 	</li>
-	{{/unless}}
 	{{#unless mybb}}
 	<li>
 		MyBB {{mybb}}
@@ -16,3 +17,4 @@
 	{{/unless}}
 	<li>test</li>
 </ul>
+{{/if}}
